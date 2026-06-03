@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agencia de Viajes - Tu próxima aventura</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <header>
+        <div class="navbar">
+            <div class="logo" onclick="navegar('catalogo')">
+                <div class="logo-icon"><i class="fa-solid fa-paper-plane"></i></div>
+                <div>
+                    <span class="logo-title">Agencia de Viajes</span>
+                    <span class="logo-sub">Tu próxima aventura</span>
+                </div>
+            </div>
+            <nav>
+                <button class="nav-btn active" id="nav-catalogo" onclick="navegar('inicio')">Inicio</button>
+                <button class="nav-btn" id="nav-catalogo-v" onclick="navegar('catalogo')">Catálogo</button>
+                <button class="nav-btn" id="nav-comparador" onclick="navegar('comparador')">Comparar</button>
+                <button class="nav-btn" id="nav-faq" onclick="navegar('faq')">FAQ</button>
+                <button class="nav-btn text-link-btn" id="nav-cotizar" onclick="navegar('cotizar')">Cotizar</button>
+                
+                <button class="action-header-btn" id="btn-nav-login" onclick="navegar('login')">Iniciar Sesión</button>
+                
+                <div id="wrapper-usuario" class="oculto" style="display: inline-block; margin-left: 10px;">
+                    <span style="color: #475569; font-weight: 500;">👤 Hola, <span id="user-display-name"></span></span>
+                    <button onclick="logout()" style="background: none; border: none; color: #ef4444; margin-left: 8px; cursor: pointer; text-decoration: underline;">Salir</button>
+                </div>>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        
+        <section id="vista-catalogo" class="vista active">
+            <div class="main-layout-container text-section-header">
+                <h1>Catálogo de Viajes</h1>
+                <p>Encuentra el paquete turístico perfecto para tu próxima aventura</p>
+            </div>
+
+            <div class="main-layout-container catalog-layout">
+                <aside class="filter-sidebar">
+                    <div class="filter-header">
+                        <span><i class="fa-solid fa-sliders"></i> Filtros</span>
+                        <button class="clear-filters-btn" onclick="limpiarFiltros()"><i class="fa-solid fa-xmark"></i> Limpiar</button>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Buscar</label>
+                        <div class="sidebar-search-wrapper">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="filtro-nombre" placeholder="Buscar paquetes..." oninput="aplicarFiltros()">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Destino</label>
+                        <select id="filtro-destino" onchange="aplicarFiltros()">
+                            <option value="">Todos los destinos</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>País</label>
+                        <select id="filtro-pais" onchange="aplicarFiltros()">
+                            <option value="">Todos los países</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <label style="margin:0;">Rango de Precio</label>
+                        </div>
+                        <input type="range" id="filtro-precio" min="0" max="6000" value="6000" step="100" oninput="actualizarLabelPrecio(this.value); aplicarFiltros();">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; color:#64748b; margin-top:4px;">
+                            <span>$0</span>
+                            <span id="label-max-precio" style="font-weight:600; color:var(--brand);">$6000</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Duración</label>
+                        <select id="filtro-duracion" onchange="aplicarFiltros()">
+                            <option value="">Todas las duraciones</option>
+                            <option value="1-5">1 a 5 días</option>
+                            <option value="6-9">6 a 9 días</option>
+                            <option value="10+">10 días o más</option>
+                        </select>
+                    </div>
+                </aside>
+
+                <div class="catalog-content">
+                    <p class="results-counter" id="contador-resultados">Mostrando 0 paquetes</p>
+                    <div id="contenedor-paquetes" class="grid-cards-viajes"></div>
+                </div>
+            </div>
+
+            <div class="blue-adventure-banner">
+                <h2>¿Listo para tu próxima aventura?</h2>
+                <p>Explora nuestro catálogo completo de paquetes turísticos y encuentra el viaje perfecto para ti</p>
+                <button onclick="window.scrollTo({top:0, behavior:'smooth'})">Ver Catálogo de Viajes</button>
+            </div>
+        </section>
+
+        <section id="vista-comparador" class="vista">
+            <div class="main-layout-container text-section-header">
+                <h1>Comparar Paquetes</h1>
+                <p>Selecciona hasta 4 paquetes para comparar características y precios</p>
+            </div>
+
+            <div class="main-layout-container">
+                <div class="comparison-status-bar">
+                    <span id="comp-counter-text" style="font-weight:600; font-size:16px;">Paquetes seleccionados: 0 / 4</span>
+                    <p style="margin:5px 0 0 0; font-size:13px; color:#64748b;">Haz clic en "Comparar" en los paquetes que deseas contrastar en la tabla inferior</p>
+                </div>
+
+                <div id="wrapper-tabla-comparativa"></div>
+
+                <h3 style="margin-top:40px; font-size:20px; color:var(--dark);">Selecciona Paquetes para Comparar</h3>
+                <div id="contenedor-comparar-grid" class="grid-cards-viajes"></div>
+            </div>
+        </section>
+
+        <section id="vista-faq" class="vista">
+            <div class="main-layout-container text-section-header" style="text-align:center;">
+                <div class="center-icon-badge"><i class="fa-regular fa-circle-question"></i></div>
+                <h1 style="font-size:36px; margin-bottom:10px;">Preguntas Frecuentes</h1>
+                <p style="max-width:600px; margin:0 auto;">Encuentra respuestas a las preguntas más comunes sobre nuestros servicios y paquetes turísticos</p>
+            </div>
+
+            <div class="main-layout-container">
+                <div class="faq-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="input-busqueda-faq" placeholder="Buscar pregunta..." oninput="filtrarPreguntasFAQ(this.value)">
+                </div>
+
+                <div class="faq-categories-tabs">
+                    <button class="faq-tab active" onclick="filtrarCategoriaFAQ('todas', this)">Todas</button>
+                    <button class="faq-tab" onclick="filtrarCategoriaFAQ('reservas', this)">Reservas y Pagos</button>
+                    <button class="faq-tab" onclick="filtrarCategoriaFAQ('destinos', this)">Destinos y Viajes</button>
+                    <button class="faq-tab" onclick="filtrarCategoriaFAQ('durante', this)">Durante el Viaje</button>
+                    <button class="faq-tab" onclick="filtrarCategoriaFAQ('cancelaciones', this)">Cancelaciones</button>
+                    <button class="faq-tab" onclick="filtrarCategoriaFAQ('general', this)">General</button>
+                </div>
+
+                <div class="faq-layout-split">
+                    <div class="faq-accordion-container" id="wrapper-acordeon-faq"></div>
+
+                    <div class="faq-sidebar-contact">
+                        <h3>¿No encontraste tu respuesta?</h3>
+                        <p>Nuestro equipo está disponible para ayudarte con cualquier duda</p>
+                        
+                        <div class="faq-contact-item">
+                            <div class="icon-side"><i class="fa-solid fa-phone"></i></div>
+                            <div>
+                                <span>Llámanos</span>
+                                <strong>+57 3127932519</strong>
+                            </div>
+                        </div>
+
+                        <div class="faq-contact-item">
+                            <div class="icon-side"><i class="fa-solid fa-envelope"></i></div>
+                            <div>
+                                <span>Escríbenos</span>
+                                <strong>info@agenciadeviajes.com</strong>
+                            </div>
+                        </div>
+
+                        <button class="sidebar-action-btn" onclick="navegar('cotizar')">Solicitar Cotización</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="vista-cotizar" class="vista">
+            <div class="main-layout-container text-section-header" style="text-align:center;">
+                <div class="center-icon-badge" style="background:#eef2ff; color:#4f46e5;"><i class="fa-regular fa-file-lines"></i></div>
+                <h1 style="font-size:36px; margin-bottom:10px;">Solicitar Cotización</h1>
+                <p>Completa el formulario y recibe una cotización personalizada en formato PDF</p>
+            </div>
+
+            <div class="main-layout-container form-split-layout">
+                <div class="main-form-card">
+                    <form id="form-solicitud-cotizacion" onsubmit="enviarFormularioCotizacion(event)">
+                        <h3 class="form-section-title">Información de Contacto</h3>
+                        <div class="form-grid-2-col">
+                            <div class="input-component">
+                                <label>Nombre Completo <span style="color:#ef4444;">*</span></label>
+                                <input type="text" id="cot-nombre" required placeholder="Juan Pérez">
+                            </div>
+                            <div class="input-component">
+                                <label>Correo Electrónico <span style="color:#ef4444;">*</span></label>
+                                <input type="email" id="cot-correo" required placeholder="agenciadeviajes@gmail.com">
+                            </div>
+                        </div>
+                        <div class="input-component" style="margin-top:20px;">
+                            <label>Teléfono <span style="color:#ef4444;">*</span></label>
+                            <input type="text" id="cot-telefono" required placeholder="+57 313366437">
+                        </div>
+
+                        <h3 class="form-section-title" style="margin-top:40px;">Detalles del Viaje</h3>
+                        <div class="form-grid-2-col">
+                            <div class="input-component">
+                                <label>Destino de Interés <span style="color:#ef4444;">*</span></label>
+                                <select id="cot-destino-select" required onchange="vincularPrecioSugerido(this.value)">
+                                    <option value="">Selecciona un destino</option>
+                                </select>
+                            </div>
+                            <div class="input-component">
+                                <label>Número de Viajeros <span style="color:#ef4444;">*</span></label>
+                                <input type="number" id="cot-viajeros" value="2" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid-2-col" style="margin-top:20px;">
+                            <div class="input-component">
+                                <label>Fecha de Salida Aproximada <span style="color:#ef4444;">*</span></label>
+                                <input type="date" id="cot-fecha" required>
+                            </div>
+                            <div class="input-component">
+                                <label>Duración (días) <span style="color:#ef4444;">*</span></label>
+                                <input type="number" id="cot-duracion" value="7" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="input-component" style="margin-top:20px;">
+                            <label>Presupuesto Estimado (USD)</label>
+                            <input type="number" id="cot-presupuesto" value="2000">
+                        </div>
+
+                        <div class="input-component" style="margin-top:20px;">
+                            <label>Comentarios o Preferencias</label>
+                            <textarea id="cot-comentarios" rows="4" placeholder="Cuéntanos sobre tus preferencias, necesidades especiales, activities de interés..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-form-btn">
+                            <i class="fa-solid fa-file-pdf"></i> Descargar Cotización (PDF)
+                        </button>
+                    </form>
+                </div>
+
+                <aside class="benefits-sidebar-card">
+                    <h3>¿Qué Recibirás?</h3>
+                    <div class="benefit-row-item">
+                        <i class="fa-regular fa-circle-check"></i>
+                        <div>
+                            <h4>Cotización en PDF</h4>
+                            <p>Documento detallado con itinerario, precios y condiciones</p>
+                        </div>
+                    </div>
+                    <div class="benefit-row-item">
+                        <i class="fa-regular fa-circle-check"></i>
+                        <div>
+                            <h4>Asesoría Personalizada</h4>
+                            <p>Un experto te contactará para resolver tus dudas</p>
+                        </div>
+                    </div>
+                    <div class="benefit-row-item">
+                        <i class="fa-regular fa-circle-check"></i>
+                        <div>
+                            <h4>Sin Compromiso</h4>
+                            <p>Cotización gratuita sin obligación de compra</p>
+                        </div>
+                    </div>
+                    <div class="benefit-row-item">
+                        <i class="fa-regular fa-circle-check"></i>
+                        <div>
+                            <h4>Respuesta Rápida</h4>
+                            <p>Recibirás respuesta en menos de 24 horas</p>
+                        </div>
+                    </div>
+                    <div class="confidential-note">
+                        <strong>Nota:</strong> Todos los datos son confidenciales y utilizados únicamente para generar tu cotización personalizada.
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section id="vista-login" class="vista">
+            <div class="main-layout-container" style="max-width:450px; padding-top:60px;">
+                <div class="main-form-card" style="text-align:center;">
+                    <div class="center-icon-badge" style="margin:0 auto 20px;"><i class="fa-solid fa-lock"></i></div>
+                    <h2 style="margin-bottom:5px; color:var(--dark);">Portal de Clientes</h2>
+                    <p style="color:#64748b; font-size:14px; margin-bottom:30px;">Ingresa tus datos para control administrativo</p>
+                    
+                    <form id="form-autenticacion-login" onsubmit="ejecutarLoginApp(event)" style="text-align:left;">
+                        <div class="input-component" style="margin-bottom:20px;">
+                            <label>Correo Institucional</label>
+                            <input type="email" id="input-auth-email" required placeholder="correo@agencia.com">
+                        </div>
+                        <div class="input-component" style="margin-bottom:25px;">
+                            <label>Contraseña</label>
+                            <input type="password" id="input-auth-pass" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="submit-form-btn" style="margin:0;">Ingresar al Portal</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <div id="modal-detalles" class="modal-shadow oculto">
+            <div class="modal-body-card">
+                <button class="close-modal-btn" onclick="cerrarModal()">&times;</button>
+                <div id="modal-dinamico-content"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-grid-wrapper">
+            <div class="footer-column-brand">
+                <div class="footer-logo">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Agencia de Viajes</span>
+                </div>
+                <p>Hacemos realidad tus sueños de viaje con los mejores paquetes turísticos y atención personalizada.</p>
+                <div class="footer-social-icons">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column-links">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li onclick="navegar('catalogo')">Inicio</li>
+                    <li onclick="navegar('catalogo')">Catálogo de Viajes</li>
+                    <li onclick="navegar('comparador')">Comparar Paquetes</li>
+                    <li onclick="navegar('faq')">Preguntas Frecuentes</li>
+                </ul>
+            </div>
+
+            <div class="footer-column-links">
+                <h3>Destinos Populares</h3>
+                <ul>
+                    <li>Cancún, México</li>
+                    <li>Punta Cana, Rep. Dominicana</li>
+                    <li>París, Francia</li>
+                    <li>Cartagena, Colombia</li>
+                    <li>Cusco, Perú</li>
+                </ul>
+            </div>
+
+            <div class="footer-column-links">
+                <h3>Contacto</h3>
+                <ul class="footer-contact-txt-list">
+                    <li><i class="fa-solid fa-phone"></i> +57 300 123 4567</li>
+                    <li><i class="fa-solid fa-envelope"></i> info@agenciadeviajes.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> Calle 123 #45-67<br><span style="padding-left:20px;">Bogotá, Colombia</span></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dependencias de Scripts Externos en Orden -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
